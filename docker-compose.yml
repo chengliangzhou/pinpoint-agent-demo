@@ -1,0 +1,41 @@
+version: "2"
+services:
+  eurekaserver:
+    image: sino/registry-eureka
+    ports:
+      - "9000:9000"
+    hostname: registry-eureka
+    container_name: sino-registry-eureka
+    environment:
+      JAVA_OPTS: "-javaagent:/pinpoint-agent/pinpoint-bootstrap-1.8.4.jar -Dpinpoint.agentId=id_eureka -Dpinpoint.applicationName=eureka"
+    volumes:
+      - /usr/local/cloud/logs/eureka-server:/logs
+  producer:
+    image: sino/producer
+    ports:
+      - "9001:9001"
+    hostname: producer-node
+    container_name: sino-producer
+    environment:
+      JAVA_OPTS: "-javaagent:/pinpoint-agent/pinpoint-bootstrap-1.8.4.jar -Dpinpoint.agentId=id_producer -Dpinpoint.applicationName=producer"
+    external_links: # 链接到docker-compose.yml外部的容器，可以是非Compose管理的外部容器。
+      - "eurekaserver:registry-eureka"
+    depends_on:
+      - eurekaserver # 依赖于注册中心
+    volumes:
+      - /usr/local/cloud/logs/sino-producer:/logs
+  consumer:
+    image: sino/consumer
+    ports:
+      - "9002:9002"
+    hostname: consumer-node
+    container_name: sino-consumer
+    environment:
+      JAVA_OPTS: "-javaagent:/pinpoint-agent/pinpoint-bootstrap-1.8.4.jar -Dpinpoint.agentId=id_consumer -Dpinpoint.applicationName=consumer"
+    external_links:
+      - "eurekaserver:registry-eureka"
+      - "producer:producer-node"
+    depends_on:
+      - eurekaserver # 依赖于注册中心
+    volumes:
+      - /usr/local/cloud/logs/consumer-node:/logs

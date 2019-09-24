@@ -1,0 +1,15 @@
+version: "2"
+services:
+  producer:
+    image: sino/producer
+    ports:
+      - "9001:9001"
+    hostname: producer-node
+    container_name: sino-producer
+    external_links:
+      - "eurekaserver:registry-eureka"
+    networks:
+      - pinpoint-docker_pinpoint # 桥接网络
+networks:
+  pinpoint-docker_pinpoint: # 使用指定网络 该网络的全名是 当前yml文件目录_pinpoint
+    external: true

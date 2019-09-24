@@ -1,0 +1,9 @@
+server:
+  port: 9001
+spring:
+  application:
+    name: producer
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://registry-eureka:9000/eureka/

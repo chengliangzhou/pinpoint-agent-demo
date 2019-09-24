@@ -1,0 +1,11 @@
+# Created by .ignore support plugin (hsz.mobi)
+.gitignore
+.idea/
+pinpoint-docker.iml
+common/target/
+consumer/consumer.iml
+consumer/target/
+producer/producer.iml
+producer/target/
+registry-eureka/target/
+registry-eureka/registry-eureka.iml

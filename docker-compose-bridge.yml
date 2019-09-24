@@ -1,0 +1,44 @@
+version: "2"
+services:
+  eurekaserver:
+    image: sino/registry-eureka
+    ports:
+      - "9000:9000"
+    hostname: registry-eureka
+    container_name: sino-registry-eureka
+    networks:
+      -  pinpoint # 桥接网络
+    volumes:
+      - /usr/local/cloud/logs/eureka-server:/logs
+  producer:
+    image: sino/producer
+    ports:
+      - "9001:9001"
+    hostname: producer-node
+    container_name: sino-producer
+    links:
+      - "eurekaserver:registry-eureka"
+    depends_on:
+      - eurekaserver # 依赖于注册中心
+    networks:
+      -  pinpoint # 桥接网络
+    volumes:
+      - /usr/local/cloud/logs/sino-producer:/logs
+  consumer:
+    image: sino/consumer
+    ports:
+      - "9002:9002"
+    hostname: consumer-node
+    container_name: sino-consumer
+    links:
+      - "eurekaserver:registry-eureka" #链接到其它服务中的容器。使用服务名称（同时作为别名），或者“服务名称:服务别名”（如 SERVICE:ALIAS）
+      - "producer:producer-node"
+    depends_on:
+      - eurekaserver # 依赖于注册中心
+    networks:
+      -  pinpoint # 桥接网络
+    volumes:
+      - /usr/local/cloud/logs/consumer-node:/logs
+networks:
+  pinpoint: # 使用指定网络 该网络的全名是 当前yml文件目录_pinpoint
+   driver: bridge

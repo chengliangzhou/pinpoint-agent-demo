@@ -1,0 +1,17 @@
+version: "2"
+services:
+  eurekaserver:
+    image: sino/registry-eureka
+    ports:
+      - "9000:9000"
+    hostname: registry-eureka
+    container_name: sino-registry-eureka
+    networks:
+      -  pinpoint-docker_pinpoint # 桥接网络
+    environment:
+      JAVA_OPTS: "-javaagent:/pinpoint-agent/pinpoint-bootstrap-1.8.4.jar -Dpinpoint.agentId=eureka -Dpinpoint.applicationName=eureka"
+    external_links:
+      - pinpoint-agent
+networks:
+  pinpoint-docker_pinpoint: # 使用指定网络 该网络的全名是 当前yml文件目录_pinpoint
+    external: true
